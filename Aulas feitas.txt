@@ -1,3 +1,0 @@
-Estou no modulo 4
-
-4.11. Desafio: collection resource de estados
