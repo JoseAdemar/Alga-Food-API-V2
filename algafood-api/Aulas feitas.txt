@@ -1,3 +1,3 @@
 Estou no modulo 4
 
-4.16. Customizando a representação em XML com Wrapper e anotações do Jackson
+4.27. Implementando a camada de domain services (e a importância da linguagem ubíqua)
