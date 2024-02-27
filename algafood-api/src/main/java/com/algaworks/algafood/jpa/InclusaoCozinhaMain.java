@@ -20,7 +20,7 @@ public class InclusaoCozinhaMain {
         Cozinha cozinha2 = new Cozinha();
         cozinha2.setNome("Japonesa");
 
-        cadastroCozinha.adicionar(cozinha1);
-        cadastroCozinha.adicionar(cozinha2);
+        cadastroCozinha.save(cozinha1);
+        cadastroCozinha.save(cozinha2);
     }
 }

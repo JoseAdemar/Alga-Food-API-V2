@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CadastroRestauranteService {
@@ -20,31 +21,29 @@ public class CadastroRestauranteService {
     @Autowired
     CozinhaRepository cozinhaRepository;
 
-    public Restaurante salvar(Restaurante restaurante){
-        Long cozinhaId =  restaurante.getCozinha().getId();
-        Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-        if (cozinha == null){
-            throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha" +
-                    " com o código %d", cozinhaId));
-        }
-         restaurante.setCozinha(cozinha);
+    public Restaurante salvar(Restaurante restaurante) {
+        Long cozinhaId = restaurante.getCozinha().getId();
+        Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha" +
+                        " com o código %d", cozinhaId)));
+        restaurante.setCozinha(cozinha);
         return restauranteRepository.adicionar(restaurante);
     }
 
-    public Restaurante atualizar( Long id, Restaurante restaurante){
-       Restaurante buscaRestaurante = restauranteRepository.buscar(id);
-       if (buscaRestaurante == null){
-           throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de restaurante" +
-                   "com o id %d", id));
-       }
-        Cozinha cozinha = cozinhaRepository.buscar(restaurante.getCozinha().getId());
-        if (cozinha == null){
+    public Restaurante atualizar(Long id, Restaurante restaurante) {
+        Restaurante buscaRestaurante = restauranteRepository.buscar(id);
+        if (buscaRestaurante == null) {
+            throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de restaurante" +
+                    "com o id %d", id));
+        }
+        Optional<Cozinha> cozinha = cozinhaRepository.findById(restaurante.getCozinha().getId());
+        if (cozinha.isEmpty()) {
             throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha" +
-                    " com o código %d", cozinha.getId()));
+                    " com o código %d", cozinha.get().getId()));
         }
 
         BeanUtils.copyProperties(restaurante.getCozinha(), buscaRestaurante.getCozinha());
-        buscaRestaurante.setCozinha(cozinha);
+        buscaRestaurante.setCozinha(cozinha.get());
 
         BeanUtils.copyProperties(restaurante, buscaRestaurante);
         return restauranteRepository.adicionar(buscaRestaurante);
